@@ -1,43 +1,27 @@
-name: .NET Core Release
-
-on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout source
-      uses: actions/checkout@v2
-      
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.101
+name: Build Windows Executable  
+on:  
+  push:  
+    branches: [ main ]  
+jobs:  
+  build:  
+    runs-on: windows-latest  
+    steps:  
+      - name: Checkout  
+        uses: actions/checkout@v2  
         
-    - name: Install dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-      
-    - name: Zip the Build
-      run: zip -r ${{ secrets.ReleaseZipName }} ./AppName/bin/Release/netcoreapp3.1/ 
-      
-    - name: Create Release and Upload Release Asset
-      uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ github.ref }}
-        body: TODO New Release.
-        draft: false
-        prerelease: false
-        files: |
-          ${{ secrets.ReleaseZipName }}.zip
-          LICENSE 
+      - name: Setup .NET Core  
+        uses: actions/setup-dotnet@v1  
+        with:  
+          dotnet-version: 5.0.x  
+        
+      - name: Build  
+        run: dotnet build --configuration Release  
+        
+      - name: Publish  
+        run: dotnet publish --configuration Release --output publish_output  
+        
+      - name: Archive Production Artifacts  
+        uses: actions/upload-artifact@v2  
+        with:  
+          name: Windows Executable  
+          path: publish_output/*.exe
