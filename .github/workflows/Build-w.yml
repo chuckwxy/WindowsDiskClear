@@ -19,7 +19,10 @@ jobs:
     - name: Install .NET SDK  
       uses: actions/setup-dotnet@v3  
       with:  
-        dotnet-version: '7.0.x' # 请替换为正确的 .NET SDK 版本，例如 '6.0.x' 或 '7.0.x'  
+        dotnet-version: '4.7.2'  
+    
+    - name: Setup MSBuild.exe  
+      uses: microsoft/setup-msbuild@v1.0.2 
   
     - name: Restore dependencies  
       run: dotnet restore ${{ env.SOLUTION_FILE }}  
