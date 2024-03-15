@@ -1,0 +1,42 @@
+name: Build-w.yml    
+on:  
+  push:  
+    branches: [ main ]  
+  pull_request:  
+    branches: [ main ]  
+  
+jobs:  
+  build:  
+    runs-on: windows-latest  # 使用Windows运行器来构建EXE文件  
+  
+    steps:  
+    - uses: actions/checkout@v2  
+      with:  
+        fetch-depth: 0  # 获取完整的仓库历史，这对于版本控制是必要的  
+  
+    # 安装.NET Core SDK  
+    - name: Setup .NET Core  
+      uses: actions/setup-dotnet@v1  
+      with:  
+        dotnet-version: 5.0.x  # 指定你需要的.NET Core版本  
+  
+    # 恢复依赖项  
+    - name: Restore dependencies  
+      run: dotnet restore  
+  
+    # 构建项目  
+    - name: Build  
+      run: dotnet build --no-restore --configuration Release  
+  
+    # 发布项目（生成EXE文件）  
+    - name: Publish  
+      run: dotnet publish --no-build --configuration Release --output ./publish  
+  
+    # 上传构建产物（可选）  
+    - name: Upload artifact  
+      uses: actions/upload-artifact@v2  
+      with:  
+        name: my-app-exe  
+        path: ./publish/  
+  
+    # 如果你想要将EXE文件作为构建的一部分上传到GitHub Releases，你可以添加额外的步骤来实现这一点。
