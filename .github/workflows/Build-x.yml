@@ -1,0 +1,29 @@
+name: Build 4.7.2 Application  
+
+on:  
+  workflow_dispatch: 
+  
+jobs:  
+  build:  
+    runs-on: windows-latest  # 使用Windows环境  
+  
+    steps:  
+    - uses: actions/checkout@v2  
+        
+    - name: Setup MSBuild  
+      uses: microsoft/setup-msbuild@v1.0.2  
+        
+    - name: Setup NuGet  
+      uses: NuGet/setup-nuget@v1.0.5  
+        
+    - name: Restore NuGet Packages  
+      run: nuget restore WindowsDiskClear.sln  
+        
+    - name: Build the application  
+      run: msbuild WindowsDiskClear.sln /p:Configuration=Release /p:TargetFrameworkVersion=v4.7.2 /p:Platform="Any CPU" /p:OutputPath=bin\Release  
+        
+    - name: Upload artifacts  
+      uses: actions/upload-artifact@v2  
+      with:  
+        name: YourApplicationExe  
+        path: YourProjectDirectory\bin\Release\YourApplication.exe
