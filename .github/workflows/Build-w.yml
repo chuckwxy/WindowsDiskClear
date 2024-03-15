@@ -18,7 +18,10 @@ jobs:
     - name: Install .NET Core    
       uses: actions/setup-dotnet@v3    
       with:    
-        dotnet-version: 6.0.x    
+        dotnet-version: 6.0.x 
+        
+    - name: Setup MSBuild.exe  
+      uses: microsoft/setup-msbuild@v1.0.2 
     
     - name: Restore the application    
       run: dotnet restore $env:SOLUTION_FILE  # 对于.NET Core和.NET 5/6/7等，通常使用dotnet restore  
