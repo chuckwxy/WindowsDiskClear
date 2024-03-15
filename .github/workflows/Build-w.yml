@@ -9,23 +9,24 @@ jobs:
       PROJECT_FILE: WindowsDiskClear.csproj
   
     steps:  
-    - uses: actions/checkout@v2  
+    - name: Checkout  
+      uses: actions/checkout@v3  
       with:  
-        fetch-depth: 0  # 获取完整的仓库历史，这对于版本控制是必要的  
+        fetch-depth: 0  
   
-    # 安装.NET Core SDK  
-    - name: Setup .NET Core  
-      uses: actions/setup-dotnet@v1  
+    - name: Install .NET Core  
+      uses: actions/setup-dotnet@v3  
       with:  
-        dotnet-version: 5.0.x  # 指定你需要的.NET Core版本  
+        dotnet-version: 6.0.x  
   
-    # 恢复依赖项  
-    - name: Restore dependencies  
-      run: dotnet restore  
+    - name: Setup MSBuild.exe  
+      uses: microsoft/setup-msbuild@v1.0.2  
   
-    # 构建项目  
-    - name: Build  
-      run: dotnet build --no-restore --configuration Release  
+    - name: Execute unit tests  
+      run: dotnet test  
+  
+    - name: Restore the application  
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration  
   
     # 发布项目（生成EXE文件）  
     - name: Publish  
