@@ -1,44 +1,40 @@
 name: Build-w.yml  
-on:      
-  workflow_dispatch:    
-jobs:      
-  build:      
-    runs-on: windows-latest  # 使用Windows运行器来构建EXE文件    
-    env:      
-      SOLUTION_FILE: WindowsDiskClear.sln  # 替换为你的解决方案文件名      
-      PROJECT_FILE: WindowsDiskClear/WindowsDiskClear.csproj  # 确保路径是正确的，可能需要调整  
-      CONFIGURATION: Release  # 定义配置变量，比如 Release 或 Debug    
-      
-    steps:      
-    - name: Checkout      
-      uses: actions/checkout@v3      
-      with:      
-        fetch-depth: 0      
-      
-    - name: Install .NET Core      
-      uses: actions/setup-dotnet@v3      
-      with:      
-        dotnet-version: 8.0.x   
-          
-    - name: Setup MSBuild.exe    
-      uses: microsoft/setup-msbuild@v1.0.2   
-      
-    - name: Restore the application      
-      run: dotnet restore ${{ env.SOLUTION_FILE }}  # 使用正确的环境变量语法  
-      
-    - name: Build the application      
-      run: dotnet build --configuration ${{ env.CONFIGURATION }}  # 使用正确的环境变量语法  
-      
-    - name: Execute unit tests      
-      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }}  # 使用正确的环境变量语法  
-      
-    # 发布项目（生成EXE文件）      
-    - name: Publish      
-      run: dotnet publish ${{ env.PROJECT_FILE }} --configuration ${{ env.CONFIGURATION }} --output ./publish  # 使用正确的环境变量语法，并确保项目文件路径正确  
-      
-    # 上传构建产物（可选）      
-    - name: Upload artifact      
-      uses: actions/upload-artifact@v2      
-      with:      
-        name: my-app-exe      
+on:  
+  workflow_dispatch:  
+  
+jobs:  
+  build:  
+    runs-on: windows-latest  
+    env:  
+      SOLUTION_FILE: WindowsDiskClear.sln  
+      PROJECT_FILE: WindowsDiskClear/WindowsDiskClear.csproj  
+      CONFIGURATION: Release  
+  
+    steps:  
+    - name: Checkout  
+      uses: actions/checkout@v3  
+      with:  
+        fetch-depth: 0  
+  
+    - name: Install .NET SDK  
+      uses: actions/setup-dotnet@v3  
+      with:  
+        dotnet-version: '7.0.x' # 请替换为正确的 .NET SDK 版本，例如 '6.0.x' 或 '7.0.x'  
+  
+    - name: Restore dependencies  
+      run: dotnet restore ${{ env.SOLUTION_FILE }}  
+  
+    - name: Build the application  
+      run: dotnet build ${{ env.PROJECT_FILE }} --configuration ${{ env.CONFIGURATION }}  
+  
+    - name: Execute unit tests  
+      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }}  
+  
+    - name: Publish  
+      run: dotnet publish ${{ env.PROJECT_FILE }} --configuration ${{ env.CONFIGURATION }} --output ./publish  
+  
+    - name: Upload artifact  
+      uses: actions/upload-artifact@v2  
+      with:  
+        name: my-app-exe  
         path: ./publish/
