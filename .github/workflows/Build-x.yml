@@ -1,17 +1,17 @@
-name: Build 4.7.2 Application  
+name: Build-x 
   
 on:  
   workflow_dispatch:  
   
 jobs:  
   build:  
-    runs-on: windows-latest  # 使用Windows环境  
+    runs-on: windows-latest
   
     steps:  
     - uses: actions/checkout@v2  
       with:  
-        fetch-depth: 0  # 确保检出所有历史记录，以便能够获取到子模块或其他依赖  
-        submodules: true  # 如果您的仓库包含子模块，请确保检出它们  
+        fetch-depth: 0 
+        submodules: true 
   
     - name: Setup MSBuild  
       uses: microsoft/setup-msbuild@v1.0.2  
@@ -21,14 +21,14 @@ jobs:
   
     - name: Restore NuGet Packages  
       run: nuget restore WindowsDiskClear.sln  
-      working-directory: ./  # 假设WindowsDiskClear.sln位于此目录下  
+      working-directory: ./
   
     - name: Build the application  
       run: msbuild WindowsDiskClear.sln /p:Configuration=Release /p:TargetFrameworkVersion=v4.7.2 /p:Platform="Any CPU" /p:OutputPath=bin\Release  
-      working-directory: ./ # 假设WindowsDiskClear.sln位于此目录下  
+      working-directory: ./  
   
     - name: Upload artifacts  
       uses: actions/upload-artifact@v2  
       with:  
         name: WindowsDiskClear  
-        path: ./bin/Release/WindowsDiskClear.exe  # 更新这里的路径以匹配您的实际项目输出目录和文件名
+        path: ./bin/Release/WindowsDiskClear.exe
