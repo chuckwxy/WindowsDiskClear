@@ -1,44 +1,44 @@
 name: Build-w.yml  
-on:    
-  workflow_dispatch:  
-jobs:    
-  build:    
-    runs-on: windows-latest  # 使用Windows运行器来构建EXE文件  
-    env:    
-      SOLUTION_FILE: WindowsDiskClear.sln  # 替换为你的解决方案文件名    
-      PROJECT_FILE: WindowsDiskClear.csproj  
-      CONFIGURATION: Release  # 定义配置变量，比如 Release 或 Debug  
-    
-    steps:    
-    - name: Checkout    
-      uses: actions/checkout@v3    
-      with:    
-        fetch-depth: 0    
-    
-    - name: Install .NET Core    
-      uses: actions/setup-dotnet@v3    
-      with:    
-        dotnet-version: 6.0.x 
-        
-    - name: Setup MSBuild.exe  
-      uses: microsoft/setup-msbuild@v1.0.2 
-    
-    - name: Restore the application    
-      run: dotnet restore $env:SOLUTION_FILE  # 对于.NET Core和.NET 5/6/7等，通常使用dotnet restore  
-    
-    - name: Build the application    
-      run: dotnet build --configuration $env:CONFIGURATION  # 添加构建步骤  
-    
-    - name: Execute unit tests    
-      run: dotnet test --no-build --configuration $env:CONFIGURATION  # 添加--no-build因为项目已经构建过了  
-    
-    # 发布项目（生成EXE文件）    
-    - name: Publish    
-      run: dotnet publish $env:PROJECT_FILE --configuration $env:CONFIGURATION --output ./publish  # 指定项目文件而不是解决方案文件，并且去掉--no-build除非你确定项目已经构建过了  
-    
-    # 上传构建产物（可选）    
-    - name: Upload artifact    
-      uses: actions/upload-artifact@v2    
-      with:    
-        name: my-app-exe    
+on:      
+  workflow_dispatch:    
+jobs:      
+  build:      
+    runs-on: windows-latest  # 使用Windows运行器来构建EXE文件    
+    env:      
+      SOLUTION_FILE: WindowsDiskClear.sln  # 替换为你的解决方案文件名      
+      PROJECT_FILE: WindowsDiskClear/WindowsDiskClear.csproj  # 确保路径是正确的，可能需要调整  
+      CONFIGURATION: Release  # 定义配置变量，比如 Release 或 Debug    
+      
+    steps:      
+    - name: Checkout      
+      uses: actions/checkout@v3      
+      with:      
+        fetch-depth: 0      
+      
+    - name: Install .NET Core      
+      uses: actions/setup-dotnet@v3      
+      with:      
+        dotnet-version: 8.0.x   
+          
+    - name: Setup MSBuild.exe    
+      uses: microsoft/setup-msbuild@v1.0.2   
+      
+    - name: Restore the application      
+      run: dotnet restore ${{ env.SOLUTION_FILE }}  # 使用正确的环境变量语法  
+      
+    - name: Build the application      
+      run: dotnet build --configuration ${{ env.CONFIGURATION }}  # 使用正确的环境变量语法  
+      
+    - name: Execute unit tests      
+      run: dotnet test --no-build --configuration ${{ env.CONFIGURATION }}  # 使用正确的环境变量语法  
+      
+    # 发布项目（生成EXE文件）      
+    - name: Publish      
+      run: dotnet publish ${{ env.PROJECT_FILE }} --configuration ${{ env.CONFIGURATION }} --output ./publish  # 使用正确的环境变量语法，并确保项目文件路径正确  
+      
+    # 上传构建产物（可选）      
+    - name: Upload artifact      
+      uses: actions/upload-artifact@v2      
+      with:      
+        name: my-app-exe      
         path: ./publish/
